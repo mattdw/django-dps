@@ -4,22 +4,31 @@ one-off and recurring payments.
 
 # Usage:
 
-You'll need `PX(PAY|POST)_USERID` and `PX(PAY|POST)_KEY` in your
-settings.py. (`PXPAY_*` for one-off payments, `PXPOST_*` for recurring.)
+You'll need to add a few items in your `settings.py`: `PXPAY_USERID`
+and `PXPAY_KEY` for interactive payments and recurring payment setup,
+and `PXPOST_USERID` and `PXPOST_KEY` for non-interactive and recurring
+billing.
 
-Then:
+Then, just call this function:
 
 `dps.transactions.make_payment(obj, request=None, attrs={})` where:
 
-* obj implements `dps.models.BasicTransactionProtocol` or
+* `obj` implements `dps.models.BasicTransactionProtocol` or
   `dps.models.FullTransactionProtocol`.
 
-* request is a request if you intent to make an interactive payment e.g.
-  by redirecting the user to the dps page. If it's none, the function
-will attempt to find and use a stored billing token and make a
-non-interactive recurring payment.
+* `request` is a Django request object or `None`. 
 
-* attrs is a dictionary of PxPay or PxPost request parameters to be
+  If you intend to make an interactive payment e.g. by redirecting the
+  user to the DPS page, then provide a request. (It's needed to build
+  fully-specified URLs for DPS to redirect back to.)
+  
+  If `request` is `None`, the function will attempt to find and use a
+  stored billing token (as described in the protocol implementations
+  in `dps/models.py`) and make a non-interactive recurring payment.
+
+* `attrs` is a dictionary of PxPay or PxPost request parameters to be
   merged in to the transaction request to DPS.
 
-
+  This allows you to do anything, really, as you could override
+  default parameters, provide credit-card details directly, specify a
+  refund rather than purchase – anything DPS supports.
