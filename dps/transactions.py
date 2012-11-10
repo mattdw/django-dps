@@ -96,10 +96,13 @@ def get_interactive_result(result_key):
 
 def offline_payment(params):
     """Make a non-interactive payment. Synchronous. Returns (success?, result)."""
-    assert (params.get("BillingId", None) or
-            params.get("DpsBillingId", None) or
-            (params.get("CardNumber", None) and params.get("Cvc2", None)))
-    assert params.get("TxnId", None)
+    try:
+        assert (params.get("BillingId", None) or
+                params.get("DpsBillingId", None) or
+                (params.get("CardNumber", None) and params.get("Cvc2", None)))
+        assert params.get("TxnId", None)
+    except AssertionError, e:
+        return (False, e)
 
     merged_params = {}
     merged_params.update(PXPOST_DEFAULTS)
