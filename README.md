@@ -38,4 +38,6 @@ if that is your wish (as it is mine.) Simply add:
 
     DPS_TEMPLATE_ENGINE = 'jinja' # or 'jinja2', it's not fussy
 
-To your `settings.py`.
+To your `settings.py`. (This depends on
+[coffin](https://github.com/coffin/coffin/) being installed, as I rely
+on its `render_to_response`.)
