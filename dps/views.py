@@ -1,8 +1,15 @@
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import get_object_or_404
 from dps.decorators import dps_result_view
 from dps.models import Transaction
+from dps.settings import TEMPLATE_ENGINE
 from django.template import RequestContext
 from pprint import pformat
+
+if TEMPLATE_ENGINE in ['jinja', 'jinja2']:
+    from coffin.shortcuts import render_to_response
+else:
+    from django.shortcuts import render_to_response
+
 
 @dps_result_view
 def transaction_success(request, token, result=None):
