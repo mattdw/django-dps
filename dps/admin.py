@@ -1,5 +1,6 @@
 from dps.models import Transaction
 from django.contrib import admin
+from django.contrib.contenttypes import generic
 
 class TransactionAdmin(admin.ModelAdmin):
     pass
