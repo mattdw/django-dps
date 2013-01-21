@@ -9,6 +9,8 @@ and `PXPAY_KEY` for interactive payments and recurring payment setup,
 and `PXPOST_USERID` and `PXPOST_KEY` for non-interactive and recurring
 billing.
 
+You'll also need to `include('dps.urls')` in your urls somewhere.
+
 Then, just call this function:
 
 `dps.transactions.make_payment(obj, request=None, attrs={})` where:
@@ -41,3 +43,19 @@ if that is your wish (as it is mine.) Simply add:
 To your `settings.py`. (This depends on
 [coffin](https://github.com/coffin/coffin/) being installed, as I rely
 on its `render_to_response`.)
+
+To put an accessor/relationship on your own model to it's
+transactions, just use GenericRelation:
+
+    class MyModel(models.Model):
+        ...
+        transactions = generic.GenericRelation(Transaction)
+        
+There's also a `dps.admin.TransactionInlineAdmin` which you can use
+with your own model admins like so:
+
+    class MyModelAdmin(admin.ModelAdmin):
+        ...
+        inlines = [TransactionInlineAdmin]
+        
+    admin.site.register(MyModel, MyModelAdmin)
