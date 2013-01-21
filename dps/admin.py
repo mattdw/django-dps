@@ -12,5 +12,5 @@ class TransactionInlineAdmin(generic.GenericTabularInline):
     def has_add_permission(self, request):
         return False
 
-    
+
 admin.site.register(Transaction, TransactionAdmin)
