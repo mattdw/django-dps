@@ -123,10 +123,12 @@ class FullTransactionProtocol(object):
         raise NotImplementedError()
 
     def transaction_succeeded(self, transaction, interactive):
-        """Called when a payment succeeds. Optional."""
+        """Called when a payment succeeds. Optional. May optionally return a 
+           success url to take the place of views.transaction_success."""
         pass
 
     def transaction_failed(self, transaction, interactive):
-        """Called when a payment fails. Optional."""
+        """Called when a payment fails. Optional. May optionally return a 
+           success url to take the place of views.transaction_failure."""
         pass
 
