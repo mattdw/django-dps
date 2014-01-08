@@ -3,6 +3,7 @@ from dps.decorators import dps_result_view
 from dps.models import Transaction
 from dps.settings import TEMPLATE_ENGINE
 from django.template import RequestContext
+from django.http import HttpResponseRedirect
 from pprint import pformat
 
 if TEMPLATE_ENGINE in ['jinja', 'jinja2']:
@@ -25,11 +26,17 @@ def transaction_success(request, token, result=None):
     if content_object.is_recurring():
         content_object.set_billing_token(result["DpsBillingId"] or None)
 
-    # callback, if it exists
-    getattr(content_object, "transaction_succeeded", lambda t: None)(transaction, True)
+    # callback, if it exists. It may optionally return a url for redirection
+    success_url = getattr(content_object,
+                          "transaction_succeeded",
+                          lambda t: None)(transaction, True)
     
-    return render_to_response("dps/transaction_success.html", RequestContext(request, {
-                "transaction": transaction}))
+    if success_url:
+        # assumed to be a valid url
+        return HttpResponseRedirect(success_url)
+    else:
+        return render_to_response("dps/transaction_success.html", RequestContext(request, {
+                    "transaction": transaction}))
 
 
 @dps_result_view
@@ -42,8 +49,16 @@ def transaction_failure(request, token, result=None):
     transaction.save()
     
     content_object = transaction.content_object
-    getattr(content_object, "transaction_failed", lambda t: None)(transaction, True)
     
-    return render_to_response("dps/transaction_failure.html", RequestContext(request, {
+    # callback, if it exists. It may optionally return a url for redirection
+    failure_url = getattr(content_object,
+                          "transaction_failed",
+                          lambda t: None)(transaction, True)
+    
+    if failure_url:
+        # assumed to be a valid url
+        return HttpResponseRedirect(failure_url)
+    else:
+        return render_to_response("dps/transaction_failure.html", RequestContext(request, {
                 "transaction": transaction}))
 
