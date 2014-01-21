@@ -78,7 +78,8 @@ class Transaction(models.Model):
 
     @property
     def merchant_reference(self):
-        return u"(#%d) %s" % (self.pk, unicode(self.content_object))
+        # Seems to have an undocumented 50 char limit
+        return (u"(#%d) %s" % (self.pk, unicode(self.content_object)))[:50]
 
     @property
     def transaction_id(self):
