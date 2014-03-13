@@ -29,7 +29,7 @@ def transaction_success(request, token, result=None):
     # callback, if it exists. It may optionally return a url for redirection
     success_url = getattr(content_object,
                           "transaction_succeeded",
-                          lambda t: None)(transaction, True)
+                          lambda *args: None)(transaction, True)
     
     if success_url:
         # assumed to be a valid url
@@ -53,7 +53,7 @@ def transaction_failure(request, token, result=None):
     # callback, if it exists. It may optionally return a url for redirection
     failure_url = getattr(content_object,
                           "transaction_failed",
-                          lambda t: None)(transaction, True)
+                          lambda *args: None)(transaction, True)
     
     if failure_url:
         # assumed to be a valid url
