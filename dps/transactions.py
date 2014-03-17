@@ -43,6 +43,10 @@ def _params_to_xml_doc(params, root="GenerateRequest"):
     list of key=value inside a single root tag."""
     root_tag = ElementTree.Element(root)
     for (key, value) in params.items():
+        # No params will be modified beyond this point, so if we still
+        # have an Exception placeholder it's time to throw it.
+        if isinstance(value, Exception):
+            raise value
         elem = ElementTree.Element(key)
         elem.text = unicode(value)
         root_tag.append(elem)
