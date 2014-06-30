@@ -65,10 +65,6 @@ class Transaction(models.Model):
         return super(Transaction, self).save(**kwargs)
     
     @models.permalink
-    def get_absolute_url(self):
-        pass
-    
-    @models.permalink
     def get_success_url(self):
         return ('dps.views.transaction_success', [self.secret])
 
