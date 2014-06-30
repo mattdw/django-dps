@@ -17,10 +17,11 @@ def transaction_success(request, token, result=None):
     transaction = get_object_or_404(Transaction.objects.filter(status__in=[Transaction.PROCESSING,
                                                                           Transaction.SUCCESSFUL]),
                                     secret=token)
-    transaction.status = Transaction.SUCCESSFUL
     transaction.result = pformat(result, width=1)
     transaction.save()
 
+    status_updated = transaction.set_status(Transaction.SUCCESSFUL)
+    
     # if we're recurring, we need to save the billing token now.
     content_object = transaction.content_object
     if content_object.is_recurring():
@@ -29,7 +30,7 @@ def transaction_success(request, token, result=None):
     # callback, if it exists. It may optionally return a url for redirection
     success_url = getattr(content_object,
                           "transaction_succeeded",
-                          lambda *args: None)(transaction, True)
+                          lambda *args: None)(transaction, True, status_updated)
     
     if success_url:
         # assumed to be a valid url
@@ -44,16 +45,17 @@ def transaction_failure(request, token, result=None):
     transaction = get_object_or_404(Transaction.objects.filter(status__in=[Transaction.PROCESSING,
                                                                            Transaction.FAILED]),
                                     secret=token)
-    transaction.status = Transaction.FAILED
     transaction.result = pformat(result, width=1)
     transaction.save()
+    
+    status_updated = transaction.set_status(Transaction.FAILED)
     
     content_object = transaction.content_object
     
     # callback, if it exists. It may optionally return a url for redirection
     failure_url = getattr(content_object,
                           "transaction_failed",
-                          lambda *args: None)(transaction, True)
+                          lambda *args: None)(transaction, True, status_updated)
     
     if failure_url:
         # assumed to be a valid url
