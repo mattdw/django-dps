@@ -21,8 +21,9 @@ def transaction_success(request, token, result=None):
     if result['Success'] != '1':
         return HttpResponseForbidden('Transaction was unsuccessful')
     
-    transaction = get_object_or_404(Transaction.objects.filter(status__in=[Transaction.PROCESSING,
-                                                                          Transaction.SUCCESSFUL]),
+    transaction = get_object_or_404(Transaction, 
+                                    status__in=[Transaction.PROCESSING,
+                                                Transaction.SUCCESSFUL],
                                     secret=token)
     transaction.result = pformat(result, width=1)
     transaction.save()
@@ -55,8 +56,9 @@ def transaction_failure(request, token, result=None):
     if result['Success'] != '0':
         return HttpResponseForbidden('Transaction was successful')
     
-    transaction = get_object_or_404(Transaction.objects.filter(status__in=[Transaction.PROCESSING,
-                                                                           Transaction.FAILED]),
+    transaction = get_object_or_404(Transaction,
+                                    status__in=[Transaction.PROCESSING,
+                                                Transaction.FAILED],
                                     secret=token)
     transaction.result = pformat(result, width=1)
     transaction.save()
