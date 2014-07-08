@@ -58,15 +58,19 @@ class Transaction(models.Model):
                                          self.get_transaction_type_display().lower(),
                                          self.amount, unicode(self.created))
     
+    def set_status(self, status):
+        '''Atomically set transaction status, returning True if the status was 
+           changed or False if it was already set to this value.'''
+        
+        return bool(Transaction.objects.exclude(status=status)
+                                       .filter(id=self.id)
+                                       .update(status=status))
+    
     def save(self, **kwargs):
         if self.content_object and not self.amount:
             self.amount = self.content_object.get_amount()
 
         return super(Transaction, self).save(**kwargs)
-    
-    @models.permalink
-    def get_absolute_url(self):
-        pass
     
     @models.permalink
     def get_success_url(self):
@@ -123,12 +127,12 @@ class FullTransactionProtocol(object):
         """Returns recurring billing token or None."""
         raise NotImplementedError()
 
-    def transaction_succeeded(self, transaction, interactive):
+    def transaction_succeeded(self, transaction, interactive, status_updated):
         """Called when a payment succeeds. Optional. May optionally return a 
            success url to take the place of views.transaction_success."""
         pass
 
-    def transaction_failed(self, transaction, interactive):
+    def transaction_failed(self, transaction, interactive, status_updated):
         """Called when a payment fails. Optional. May optionally return a 
            success url to take the place of views.transaction_failure."""
         pass
