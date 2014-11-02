@@ -34,7 +34,9 @@ def _get_response(url, xml_body):
     """Takes and returns an ElementTree xml document."""
     req = urllib2.Request(url, ElementTree.tostring(xml_body, encoding='utf-8'))
     response = urllib2.urlopen(req)
-    return ElementTree.fromstring(response.read())
+    ret = ElementTree.fromstring(response.read())
+    response.close()
+    return ret
 
 
 def _params_to_xml_doc(params, root="GenerateRequest"):
