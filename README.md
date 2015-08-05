@@ -1,3 +1,5 @@
+# [Development has moved to https://github.com/gregplaysguitar/django-dps/](https://github.com/gregplaysguitar/django-dps/) - this repo is out of date.
+
 DPS payment processing for django. (Almost) completely agnostic about
 your models. By default, you never handle credit card details. Handles
 one-off and recurring payments.
